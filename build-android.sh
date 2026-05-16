@@ -19,10 +19,12 @@ INSTALL_PREFIX="${OUT_DIR:-$SOURCE_DIR/android-output}"
 # - BUILD_STATIC=0/1   是否构建全静态二进制/静态 libcurl
 # - BUILD_SHARED=0/1   是否构建动态 libcurl + 动态链接 curl
 # - DO_INSTALL=0/1     是否执行 cmake --install（不安装则只在 build 目录有产物）
+# - STRIP_OUTPUTS=0/1  安装后是否自动 strip curl
 CLEAN="${CLEAN:-0}"
 BUILD_STATIC="${BUILD_STATIC:-1}"
 BUILD_SHARED="${BUILD_SHARED:-1}"
 DO_INSTALL="${DO_INSTALL:-1}"
+STRIP_OUTPUTS="${STRIP_OUTPUTS:-1}"
 
 # 要编译的 ABI 列表（可按需裁剪）
 # 可用环境变量覆盖：ANDROID_ABIS="arm64-v8a x86_64"
@@ -238,6 +240,9 @@ build_one() {
   cmake --build "$build_dir" -j "$(sysctl -n hw.ncpu)"
   if [[ "$DO_INSTALL" == "1" ]]; then
     cmake --install "$build_dir"
+    if [[ "$STRIP_OUTPUTS" == "1" && -f "$prefix/bin/curl" ]]; then
+      "$ANDROID_NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip" --strip-all "$prefix/bin/curl"
+    fi
   fi
 }
 
