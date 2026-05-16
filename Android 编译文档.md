@@ -154,13 +154,14 @@ Android 的 DNS 解析走 `getaddrinfo()` → `netd` binder 服务。全静态�
 ### 验证 DNS 可用
 
 ```bash
+# 写入 resolv.conf（如果设备允许）
+adb shell 'echo "nameserver 223.5.5.5" > /etc/resolv.conf'
+
 # 推送全静态版到设备
 adb push android-output/arm64-v8a/static/bin/curl /tmp/curl
 adb shell chmod +x /tmp/curl
 adb shell '/tmp/curl http://www.baidu.com/ -v'
 
-# 写入 resolv.conf（如果设备允许）
-adb shell 'echo "nameserver 223.5.5.5" > /etc/resolv.conf'
 
 # 带 --dns-servers 测试
 adb shell '/tmp/curl --dns-servers 223.5.5.5 http://www.baidu.com/ -o /dev/null -sS -v 2>&1 | head -80'
