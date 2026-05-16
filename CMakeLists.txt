@@ -1675,7 +1675,7 @@ if(NOT WIN32)
 
   check_symbol_exists("memset_s" "string.h" HAVE_MEMSET_S)
   if(NOT HAVE_MEMSET_S)
-    check_function_exists("memset_explicit" HAVE_MEMSET_EXPLICIT)
+    check_symbol_exists("memset_explicit" "string.h" HAVE_MEMSET_EXPLICIT)
   endif()
 endif()
 
